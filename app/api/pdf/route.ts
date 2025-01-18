@@ -1,7 +1,7 @@
 import path from "node:path";
 import * as fs from "node:fs/promises";
 import pdf from "pdf-parse-fork";
-import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
+import { PDFDocument, type PDFFont, rgb, StandardFonts } from "pdf-lib";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { generateText } from "ai";
 
@@ -33,25 +33,25 @@ export async function POST(req: Request) {
 			);
 		}
 
-		const pdfUrl = await generateStyledPDF(filePath, newTextFromAi);
+		const pdfBlob = await generateStyledPDF(filePath, newTextFromAi);
 		await fs.unlink(filePath); // Eliminar el archivo después de procesarlo
 
-		return Response.json({
-			status: "success",
-			data: newTextFromAi,
-			pdfUrl: pdfUrl,
+		// Enviar el Blob directamente al front-end
+		return new Response(pdfBlob, {
+			headers: {
+				"Content-Type": "application/pdf",
+			},
 		});
 	} catch (error) {
 		console.error("Error processing PDF:", error);
 		return Response.json({
 			status: "error",
 			data: "Failed to process PDF.",
-			pdfUrl: null,
+			pdfBlob: null,
 		});
 	}
 }
 
-// Try using pdf-parse, fallback to a different library if there's an error
 async function extractTextFromPDF(pdfPath: string) {
 	try {
 		const dataBuffer = await fs.readFile(pdfPath);
@@ -66,7 +66,42 @@ async function extractTextFromPDF(pdfPath: string) {
 	}
 }
 
-async function generateStyledPDF(originalPdfPath: string, newText: string) {
+// Nueva función para dividir el texto en líneas ajustadas al ancho de la página
+function splitTextIntoLines(
+	text: string,
+	font: PDFFont,
+	fontSize: number,
+	maxWidth: number,
+): string[] {
+	const words = text.replace(/\n/g, " ").split(" "); // Reemplaza saltos de línea por espacio
+	const lines: string[] = [];
+	let currentLine = "";
+
+	for (const word of words) {
+		const testLine = currentLine ? `${currentLine} ${word}` : word;
+		const width = font.widthOfTextAtSize(testLine, fontSize);
+
+		if (width <= maxWidth) {
+			currentLine = testLine;
+		} else {
+			if (currentLine) {
+				lines.push(currentLine);
+			}
+			currentLine = word; // Empieza una nueva línea
+		}
+	}
+
+	if (currentLine) {
+		lines.push(currentLine); // Agrega la última línea si queda texto
+	}
+
+	return lines;
+}
+
+async function generateStyledPDF(
+	originalPdfPath: string,
+	newText: string,
+): Promise<Blob> {
 	try {
 		const existingPdfBytes = await fs.readFile(originalPdfPath);
 		const originalPdfDoc = await PDFDocument.load(existingPdfBytes);
@@ -85,41 +120,23 @@ async function generateStyledPDF(originalPdfPath: string, newText: string) {
 		const firstPage = newPdfDoc.getPages()[0];
 		const { width, height } = firstPage.getSize();
 
-		firstPage.drawText(newText, {
-			x: 50,
-			y: height - 100,
-			size: 12,
-			font: helveticaFont,
-			color: rgb(0, 0, 0),
-			maxWidth: width - 100,
-			lineHeight: 14,
-		});
+		const lines = splitTextIntoLines(newText, helveticaFont, 12, width - 100);
+		let yPosition = height - 100;
 
+		for (const line of lines) {
+			firstPage.drawText(line, {
+				x: 50,
+				y: yPosition,
+				size: 12,
+				font: helveticaFont,
+				color: rgb(0, 0, 0),
+			});
+			yPosition -= 14; // Espaciado entre líneas
+		}
 		const newPdfBytes = await newPdfDoc.save();
+		const blob = new Blob([newPdfBytes], { type: "application/pdf" });
 
-		const newFilePath = path.join(
-			process.cwd(),
-			"public",
-			`modified_${path.basename(originalPdfPath)}`,
-		);
-		await fs.writeFile(newFilePath, newPdfBytes);
-
-		const modifiedPdfPath = path.join(
-			process.cwd(),
-			"public",
-			`modified_${path.basename(originalPdfPath)}`,
-		);
-
-		const blobModifiedPdf = await fs.readFile(modifiedPdfPath);
-		const blob = new Blob([blobModifiedPdf], { type: "application/pdf" });
-
-		const pdfUrl = URL.createObjectURL(blob);
-
-		console.log({
-			pdfUrl,
-		});
-
-		return pdfUrl;
+		return blob;
 	} catch (error) {
 		console.error("Error generating styled PDF:", error);
 		throw new Error("Failed to generate styled PDF.");
@@ -134,16 +151,9 @@ export const aiGenerateCV = async (
 		apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
 	});
 	try {
-		// validacion
-		if (!textExtracted) {
-			throw new Error("No CV file provided");
-		}
+		if (!textExtracted) throw new Error("No CV file provided");
+		if (!jobDescription) throw new Error("No job description provided");
 
-		if (!jobDescription) {
-			throw new Error("No job description provided");
-		}
-
-		// Generate AI text
 		const model = google("gemini-1.5-pro-latest");
 		const prompt = `
 # INSTRUCCIONES IMPORTANTES #
@@ -161,10 +171,7 @@ CV original: ${textExtracted}
 `;
 
 		const { text } = await generateText({ model, prompt });
-
-		console.log({
-			text,
-		});
+		console.log({ text });
 
 		return text;
 	} catch (error) {
