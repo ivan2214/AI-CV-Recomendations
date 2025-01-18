@@ -15,9 +15,11 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { aiGenerateCV } from "@/actions/ai/iaGenerateCV";
 
 type CVUploadFormProps = {
-	onUpload: (oldCV: string, newCV: string, suggestions: string[]) => void;
+	onUpload: (oldCV: string) => void;
+	handleNewCVUpload: (newCV: string) => void;
 };
 
 const formSchema = z.object({
@@ -27,7 +29,10 @@ const formSchema = z.object({
 	jobDescription: z.string().min(10).max(160),
 });
 
-export default function CVUploadForm({ onUpload }: CVUploadFormProps) {
+export default function CVUploadForm({
+	onUpload,
+	handleNewCVUpload,
+}: CVUploadFormProps) {
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -40,16 +45,15 @@ export default function CVUploadForm({ onUpload }: CVUploadFormProps) {
 		const file = event.target.files?.[0];
 		if (file) {
 			const fileURL = URL.createObjectURL(file);
-			onUpload(fileURL, fileURL, [
-				"Mejorar habilidades técnicas",
-				"Añadir más proyectos",
-				"Destacar logros",
-			]);
+			onUpload(fileURL);
 		}
 	};
 
-	function onSubmit(values: z.infer<typeof formSchema>) {
+	async function onSubmit(values: z.infer<typeof formSchema>) {
 		console.log(values);
+		const { cvFile, jobDescription } = values;
+		const newCVUrl = await aiGenerateCV(cvFile, jobDescription);
+		handleNewCVUpload(newCVUrl);
 	}
 
 	return (
