@@ -25,7 +25,7 @@ type CVUploadFormProps = {
 };
 
 const formSchema = z.object({
-	cvFile: z.instanceof(File).refine((file) => file.size > 0, {
+	cvOriginal: z.instanceof(File).refine((file) => file.size > 0, {
 		message: "CV file is required and must not be empty",
 	}),
 	jobDescription: z.string().min(10).max(1500),
@@ -39,7 +39,7 @@ export default function CVUploadForm({
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			cvFile: undefined,
+			cvOriginal: undefined,
 			jobDescription: "",
 		},
 	});
@@ -53,14 +53,21 @@ export default function CVUploadForm({
 	};
 
 	async function onSubmit(values: z.infer<typeof formSchema>) {
-		const { cvFile, jobDescription } = values;
+		const { cvOriginal, jobDescription } = values;
 		try {
 			startTransition(async () => {
-				const { status, data } = await aiGenerateCV(cvFile, jobDescription);
-				if (status === "success") {
-					handleNewCVUpload(data);
+				const { status, pdfUrl, data } = await aiGenerateCV(
+					cvOriginal,
+					jobDescription,
+				);
+				if (status === "success" && pdfUrl) {
+					console.log({
+						data,
+					});
+
+					handleNewCVUpload(pdfUrl);
 				} else {
-					console.log(data);
+					console.log("Error al generar el PDF");
 				}
 			});
 		} catch (error) {
@@ -70,10 +77,14 @@ export default function CVUploadForm({
 
 	return (
 		<Form {...form}>
-			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+			<form
+				onSubmit={form.handleSubmit(onSubmit)}
+				className="space-y-4"
+				encType="multipart/form-data"
+			>
 				<FormField
 					control={form.control}
-					name="cvFile"
+					name="cvOriginal"
 					render={({ field }) => (
 						<FormItem>
 							<FormLabel>CV</FormLabel>
@@ -88,7 +99,7 @@ export default function CVUploadForm({
 								/>
 							</FormControl>
 							<FormDescription>
-								Seleccione un archivo PDF, DOC, DOCX o TXT.
+								Suba su CV en formato PDF, DOC, DOCX o TXT
 							</FormDescription>
 							<FormMessage />
 						</FormItem>

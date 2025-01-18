@@ -4,8 +4,6 @@ import { prisma } from "./prisma";
 export const checkUser = async () => {
 	const user = await currentUser();
 
-	console.log(user);
-
 	// Check for current logged in clerck user
 	if (!user) {
 		return null;
