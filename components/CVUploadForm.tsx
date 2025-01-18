@@ -15,7 +15,6 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { aiGenerateCV } from "@/actions/ai/iaGenerateCV";
 import { useTransition } from "react";
 import { Loader2 } from "lucide-react";
 
@@ -40,7 +39,26 @@ export default function CVUploadForm({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			cvOriginal: undefined,
-			jobDescription: "",
+			jobDescription: `
+Requisitos 
+
+Experiencia: 
+Mínimo de 3 años como desarrollador front-end. Tecnologías: Dominio de HTML5, CSS3, JavaScript, TypeScript, Node.js y Vainilla JS.
+Frameworks:
+Experiencia con jQuery, React, Bootstrap 3+.
+Familiarizado con herramientas como Babel y Webpack.
+Sólida experiencia en el uso de Gatsby.js
+Diseño responsivo: Conocimiento profundo de la creación de diseños responsivos, aplicaciones web progresivas (PWA) y aplicaciones de una sola página (SPA).
+Control de versiones: Competente en el uso de Git para el control de versiones de código fuente.
+Pruebas: Experiencia con marcos de pruebas unitarias y de integración como Mocha y Jest.
+Optimización web: Fundamentos sólidos en la optimización de páginas web, que incluyen:
+Análisis de tiempos de carga.
+Implementación de estrategias de almacenamiento en caché.
+Optimización de la entrega de imágenes y contenido a través de CDN.
+Técnicas como la carga diferida y la construcción de componentes web.
+Calidad del código: Competente en el uso de herramientas de revisión de código como SonarQube y Linting.
+Fundamentos de DevOps: Comprensión básica de los flujos de trabajo de integración.
+Marcos Ágiles: Conocimiento de metodologías ágiles de desarrollo y buenas prácticas.`,
 		},
 	});
 
@@ -55,20 +73,24 @@ export default function CVUploadForm({
 	async function onSubmit(values: z.infer<typeof formSchema>) {
 		const { cvOriginal, jobDescription } = values;
 		try {
-			startTransition(async () => {
-				const { status, pdfUrl, data } = await aiGenerateCV(
-					cvOriginal,
-					jobDescription,
-				);
-				if (status === "success" && pdfUrl) {
-					console.log({
-						data,
-					});
+			const formData = new FormData();
+			formData.append("cvOriginal", cvOriginal, cvOriginal.name);
+			formData.append("jobDescription", jobDescription);
 
-					handleNewCVUpload(pdfUrl);
+			startTransition(async () => {
+				const response = await fetch("/api/pdf", {
+					method: "POST",
+					body: formData,
+				});
+				const result = await response.text();
+
+				console.log("Result:", result);
+
+				/* if (result.status === "success" && result.pdfUrl) {
+					handleNewCVUpload(result.pdfUrl);
 				} else {
 					console.log("Error al generar el PDF");
-				}
+				} */
 			});
 		} catch (error) {
 			console.log(error);
