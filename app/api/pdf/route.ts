@@ -143,10 +143,10 @@ async function generateStyledPDF(
 	}
 }
 
-export const aiGenerateCV = async (
+async function aiGenerateCV(
 	textExtracted: string,
 	jobDescription: string,
-): Promise<string | null> => {
+): Promise<string | null> {
 	const google = createGoogleGenerativeAI({
 		apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
 	});
@@ -178,4 +178,4 @@ CV original: ${textExtracted}
 		console.error("Error generating CV:", error);
 		return null;
 	}
-};
+}
