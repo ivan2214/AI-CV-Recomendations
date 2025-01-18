@@ -1,18 +1,8 @@
-"use client";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
+import { Button } from "./ui/button";
 
-export default function Header({
-	isLoggedIn,
-	onLogout,
-}: { isLoggedIn: boolean; onLogout: () => void }) {
+export default function Header() {
 	return (
 		<header className="bg-white shadow-sm">
 			<div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -23,33 +13,14 @@ export default function Header({
 						</Link>
 					</div>
 					<div className="flex items-center">
-						{isLoggedIn ? (
-							<DropdownMenu>
-								<DropdownMenuTrigger asChild>
-									<Button
-										variant="ghost"
-										className="relative h-8 w-8 rounded-full"
-									>
-										<Avatar className="h-8 w-8">
-											<AvatarImage
-												src="/placeholder-avatar.jpg"
-												alt="User avatar"
-											/>
-											<AvatarFallback>U</AvatarFallback>
-										</Avatar>
-									</Button>
-								</DropdownMenuTrigger>
-								<DropdownMenuContent align="end">
-									<DropdownMenuItem>Perfil</DropdownMenuItem>
-									<DropdownMenuItem>Configuración</DropdownMenuItem>
-									<DropdownMenuItem onClick={onLogout}>
-										Cerrar sesión
-									</DropdownMenuItem>
-								</DropdownMenuContent>
-							</DropdownMenu>
-						) : (
-							<Button>Iniciar sesión</Button>
-						)}
+						<SignedOut>
+							<Button>
+								<SignInButton mode="modal">Iniciar sesion</SignInButton>
+							</Button>
+						</SignedOut>
+						<SignedIn>
+							<UserButton showName />
+						</SignedIn>
 					</div>
 				</div>
 			</div>

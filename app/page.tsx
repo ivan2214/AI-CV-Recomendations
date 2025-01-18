@@ -1,30 +1,29 @@
-"use client";
-
 import CVComparison from "@/components/CVComparison";
 import Header from "@/components/Header";
 import LoginHero from "@/components/LoginHero";
-import { useState } from "react";
+import { auth, currentUser } from "@clerk/nextjs/server";
 
-export default function Home() {
-	const [isLoggedIn, setIsLoggedIn] = useState(false);
+export default async function Home() {
+	// Get the userId from auth() -- if null, the user is not signed in
+	const { userId } = await auth();
 
-	const handleLogin = () => {
-		setIsLoggedIn(true);
-	};
+	if (userId) {
+		// Query DB for user specific information or display assets only to signed in users
+	}
 
-	const handleLogout = () => {
-		setIsLoggedIn(false);
-	};
-
+	// Get the Backend API User object when you need access to the user's information
+	const user = await currentUser();
+	// Use `user` to render user details or create UI elements
+	const isLoggedIn = !!user;
 	return (
 		<>
-			<Header isLoggedIn={isLoggedIn} onLogout={handleLogout} />
-			{!isLoggedIn ? (
+			<Header />
+			{isLoggedIn ? (
 				<main className="mx-auto h-full w-full max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
 					<CVComparison />
 				</main>
 			) : (
-				<LoginHero onLogin={handleLogin} />
+				<LoginHero />
 			)}
 		</>
 	);

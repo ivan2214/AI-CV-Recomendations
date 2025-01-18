@@ -10,6 +10,7 @@
 		"check": "biome check --write"
 	},
 	"dependencies": {
+		"@clerk/nextjs": "^6.9.14",
 		"@geoffcox/react-splitter": "^2.1.2",
 		"@hookform/resolvers": "^3.10.0",
 		"@radix-ui/react-avatar": "^1.1.2",
