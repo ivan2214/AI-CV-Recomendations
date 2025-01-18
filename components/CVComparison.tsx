@@ -1,7 +1,13 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+	Card,
+	CardContent,
+	CardFooter,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
@@ -89,17 +95,20 @@ export default function CVComparison() {
 	}
 
 	return (
-		<div className="flex flex-col gap-4 md:flex-row">
-			<div className="w-full space-y-4 md:w-1/3">
-				<Form {...form}>
-					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-						<Card className="p-4">
-							<CardHeader>
-								<CardTitle className="text-xl">
-									Cargar CV y Descripción de Oferta
-								</CardTitle>
-							</CardHeader>
-							<CardContent>
+		<div className="grid grid-cols-2 grid-rows-3 gap-4">
+			<div className="row-span-3">
+				<Card>
+					<CardHeader>
+						<CardTitle className="text-xl">
+							Cargar CV y Descripción de Oferta
+						</CardTitle>
+					</CardHeader>
+					<CardContent>
+						<Form {...form}>
+							<form
+								className="space-y-4"
+								onSubmit={form.handleSubmit(onSubmit)}
+							>
 								<FormField
 									control={form.control}
 									name="cvFile"
@@ -151,13 +160,17 @@ export default function CVComparison() {
 										</FormItem>
 									)}
 								/>
-							</CardContent>
-						</Card>
-						<Button type="submit">Analizar</Button>
-					</form>
-				</Form>
+							</form>
+						</Form>
+					</CardContent>
+					<CardFooter>
+						<Button className="ml-auto" type="submit">
+							Analizar
+						</Button>
+					</CardFooter>
+				</Card>
 			</div>
-			<div className="w-full space-y-4 md:w-2/3">
+			<div className="row-span-3 grid grid-cols-1 gap-4">
 				<Card>
 					<CardHeader>
 						<CardTitle className="text-xl">Comparación de CV</CardTitle>
@@ -187,7 +200,7 @@ export default function CVComparison() {
 						</div>
 					</CardContent>
 				</Card>
-				<Card className="p-4">
+				<Card>
 					<CardHeader>
 						<CardTitle className="text-xl">
 							Sugerencias y Recomendaciones
