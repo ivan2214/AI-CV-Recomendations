@@ -82,15 +82,16 @@ Marcos Ágiles: Conocimiento de metodologías ágiles de desarrollo y buenas pr�
 					method: "POST",
 					body: formData,
 				});
-				const result = await response.text();
+				const result: { status: string; data?: string; pdfUrl?: string } =
+					await response.json();
 
 				console.log("Result:", result);
 
-				/* if (result.status === "success" && result.pdfUrl) {
+				if (result.status === "success" && result.pdfUrl) {
 					handleNewCVUpload(result.pdfUrl);
 				} else {
 					console.log("Error al generar el PDF");
-				} */
+				}
 			});
 		} catch (error) {
 			console.log(error);
