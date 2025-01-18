@@ -1,8 +1,10 @@
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
 import { Button } from "./ui/button";
+import { checkUser } from "@/lib/checkUser";
 
-export default function Header() {
+export default async function Header() {
+	const user = await checkUser();
 	return (
 		<header className="bg-white shadow-sm">
 			<div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -14,10 +16,11 @@ export default function Header() {
 					</div>
 					<div className="flex items-center">
 						<SignedOut>
-							<Button>
-								<SignInButton mode="modal">Iniciar sesion</SignInButton>
-							</Button>
+							<SignInButton mode="modal">
+								<Button>Iniciar sesión</Button>
+							</SignInButton>
 						</SignedOut>
+
 						<SignedIn>
 							<UserButton showName />
 						</SignedIn>

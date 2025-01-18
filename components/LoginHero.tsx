@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { SignedOut, SignInButton } from "@clerk/nextjs";
+import { SignInButton } from "@clerk/nextjs";
 
 export default function LoginHero() {
 	return (
@@ -9,11 +9,10 @@ export default function LoginHero() {
 				<p className="mt-4 text-lg">
 					Analiza y compara tus curriculums de manera fácil y rápida
 				</p>
-				<SignedOut>
-					<Button>
-						<SignInButton mode="modal">Iniciar sesion</SignInButton>
-					</Button>
-				</SignedOut>
+
+				<SignInButton mode="modal">
+					<Button>Iniciar sesión</Button>
+				</SignInButton>
 			</div>
 		</div>
 	);

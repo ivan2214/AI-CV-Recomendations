@@ -15,6 +15,7 @@ export default async function Home() {
 	const user = await currentUser();
 	// Use `user` to render user details or create UI elements
 	const isLoggedIn = !!user;
+
 	return (
 		<>
 			<Header />
