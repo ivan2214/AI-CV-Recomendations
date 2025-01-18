@@ -16,6 +16,7 @@
 	},
 	"dependencies": {
 		"@ai-sdk/google": "^1.1.0",
+		"@ai-sdk/openai-compatible": "^0.1.0",
 		"@clerk/nextjs": "^6.9.14",
 		"@geoffcox/react-splitter": "^2.1.2",
 		"@hookform/resolvers": "^3.10.0",

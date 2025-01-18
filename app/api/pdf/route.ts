@@ -2,7 +2,8 @@ import path from "node:path";
 import * as fs from "node:fs/promises";
 import pdf from "pdf-parse-fork";
 import { PDFDocument, type PDFFont, rgb, StandardFonts } from "pdf-lib";
-import { createGoogleGenerativeAI } from "@ai-sdk/google";
+/* import { createGoogleGenerativeAI } from "@ai-sdk/google"; */
+import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
 import { generateText } from "ai";
 
 export async function POST(req: Request) {
@@ -147,14 +148,23 @@ async function aiGenerateCV(
 	textExtracted: string,
 	jobDescription: string,
 ): Promise<string | null> {
-	const google = createGoogleGenerativeAI({
+	/* 	const google = createGoogleGenerativeAI({
 		apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
+	}); */
+
+	const lmstudio = createOpenAICompatible({
+		name: "lmstudio",
+		baseURL: "http://localhost:1234/v1",
 	});
+
 	try {
 		if (!textExtracted) throw new Error("No CV file provided");
 		if (!jobDescription) throw new Error("No job description provided");
 
-		const model = google("gemini-1.5-pro-latest");
+		/* const model = google("gemini-1.5-pro-latest"); */
+
+		const model = lmstudio("llama-3.2-1b");
+
 		const prompt = `
 # INSTRUCCIONES IMPORTANTES #
 - Mantén toda la información relevante del CV original.
