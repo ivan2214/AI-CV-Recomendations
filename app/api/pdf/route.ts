@@ -123,6 +123,7 @@ async function generateStyledPDF(
 
 		const lines = splitTextIntoLines(newText, helveticaFont, 12, width - 100);
 		let yPosition = height - 100;
+		const lineHeight = 12 * 1.2; // Ajuste del espaciado de las líneas
 
 		for (const line of lines) {
 			firstPage.drawText(line, {
@@ -132,7 +133,7 @@ async function generateStyledPDF(
 				font: helveticaFont,
 				color: rgb(0, 0, 0),
 			});
-			yPosition -= 14; // Espaciado entre líneas
+			yPosition -= lineHeight; // Usar lineHeight para el espaciado
 		}
 		const newPdfBytes = await newPdfDoc.save();
 		const blob = new Blob([newPdfBytes], { type: "application/pdf" });
@@ -166,24 +167,31 @@ async function aiGenerateCV(
 		const model = lmstudio("llama-3.2-1b");
 
 		const prompt = `
-# INSTRUCCIONES IMPORTANTES #
-- Mantén toda la información relevante del CV original.
-- Escribe en el mismo idioma en que se encuentra el CV original.
-- Conserva exactamente el estilo, formato, fuente y diseño del CV original.
-- Corrige errores ortográficos y gramaticales.
-- Mejora el contenido utilizando palabras clave de la descripción del puesto.
-
-### OBJETIVO ###
-Generar una versión optimizada del CV original adaptada a la siguiente descripción de puesto, destacando habilidades y experiencia relevantes.
-
-Descripción del puesto: ${jobDescription}
-CV original: ${textExtracted}
-`;
+  # INSTRUCCIONES IMPORTANTES #
+  - Mantén toda la información relevante del CV original.
+  - Escribe en el mismo idioma en que se encuentra el CV original.
+  - Conserva exactamente el estilo, formato, fuente y diseño del CV original.
+  - Corrige errores ortográficos y gramaticales.
+  - Mejora el contenido utilizando palabras clave de la descripción del puesto.
+  
+  ### OBJETIVO ###
+  Generar una versión optimizada del CV original adaptada a la siguiente descripción de puesto, destacando habilidades y experiencia relevantes.
+  
+  Descripción del puesto: ${jobDescription}
+  CV original: ${textExtracted}
+  `;
 
 		const { text } = await generateText({ model, prompt });
-		console.log({ text });
 
-		return text;
+		// Limpiar y formatear el texto antes de devolverlo
+		const cleanedText = text
+			.replace(/\n+/g, "\n") // Reemplaza saltos de línea excesivos por un solo salto de línea
+			.replace(/ +/g, " ") // Reemplaza espacios múltiples por un solo espacio
+			.trim(); // Elimina espacios al inicio y final del texto
+
+		console.log("Cleaned Text:", cleanedText);
+
+		return cleanedText;
 	} catch (error) {
 		console.error("Error generating CV:", error);
 		return null;
