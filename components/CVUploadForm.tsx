@@ -16,6 +16,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { aiGenerateCV } from "@/actions/ai/iaGenerateCV";
+import { useTransition } from "react";
+import { Loader2 } from "lucide-react";
 
 type CVUploadFormProps = {
 	onUpload: (oldCV: string) => void;
@@ -26,13 +28,14 @@ const formSchema = z.object({
 	cvFile: z.instanceof(File).refine((file) => file.size > 0, {
 		message: "CV file is required and must not be empty",
 	}),
-	jobDescription: z.string().min(10).max(160),
+	jobDescription: z.string().min(10).max(1500),
 });
 
 export default function CVUploadForm({
 	onUpload,
 	handleNewCVUpload,
 }: CVUploadFormProps) {
+	const [isPending, startTransition] = useTransition();
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -50,10 +53,19 @@ export default function CVUploadForm({
 	};
 
 	async function onSubmit(values: z.infer<typeof formSchema>) {
-		console.log(values);
 		const { cvFile, jobDescription } = values;
-		const newCVUrl = await aiGenerateCV(cvFile, jobDescription);
-		handleNewCVUpload(newCVUrl);
+		try {
+			startTransition(async () => {
+				const { status, data } = await aiGenerateCV(cvFile, jobDescription);
+				if (status === "success") {
+					handleNewCVUpload(data);
+				} else {
+					console.log(data);
+				}
+			});
+		} catch (error) {
+			console.log(error);
+		}
 	}
 
 	return (
@@ -103,7 +115,10 @@ export default function CVUploadForm({
 					)}
 				/>
 
-				<Button type="submit">Analizar</Button>
+				<Button disabled={isPending} type="submit">
+					{isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+					{isPending ? "Analizando" : "Analizar"}
+				</Button>
 			</form>
 		</Form>
 	);
