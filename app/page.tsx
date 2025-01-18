@@ -1,4 +1,4 @@
-import CVComparison from "@/components/CVComparison";
+import CVComparison from "@/components/CVComparisonPage";
 import Header from "@/components/Header";
 import LoginHero from "@/components/LoginHero";
 import { auth, currentUser } from "@clerk/nextjs/server";
