@@ -29,9 +29,13 @@ type CVUploadFormProps = {
 };
 
 const formSchema = z.object({
-	cvOriginal: z.instanceof(File).refine((file) => file.size > 0, {
-		message: "CV file is required and must not be empty",
-	}),
+	cvOriginal: z
+		.instanceof(File, {
+			message: "CV file is required and must not be empty",
+		})
+		.refine((file) => file.size > 0, {
+			message: "CV file is required and must not be empty",
+		}),
 	jobDescription: z.string().min(10).max(1500),
 });
 

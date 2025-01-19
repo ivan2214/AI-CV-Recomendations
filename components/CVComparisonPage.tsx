@@ -7,10 +7,11 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import { CheckCircle, FileText, Upload, XCircle, Zap } from "lucide-react";
+import { FileText, Upload, Zap } from "lucide-react";
 import { useState, useTransition } from "react";
 import CVUploadForm from "./CVUploadForm";
 import { Progress } from "./ui/progress";
+import SuggestionsList from "./SuggestionsList";
 
 export default function CVComparisonPage() {
 	const [file, setFile] = useState<File | null>();
@@ -87,18 +88,7 @@ export default function CVComparisonPage() {
 										<Progress value={33} className="w-full bg-secondary" />
 									</div>
 								) : recommendations.length > 0 ? (
-									<ul className="space-y-4">
-										{recommendations.map((rec) => (
-											<li key={rec} className="flex items-start">
-												{rec.startsWith("No") || rec.startsWith("no") ? (
-													<XCircle className="mt-1 mr-2 h-5 w-5 flex-shrink-0 text-red-500" />
-												) : (
-													<CheckCircle className="mt-1 mr-2 h-5 w-5 flex-shrink-0 text-green-500" />
-												)}
-												<span className="text-white">{rec}</span>
-											</li>
-										))}
-									</ul>
+									<SuggestionsList recommendations={recommendations} />
 								) : (
 									<p className="text-gray-300 italic">
 										AI-powered recommendations will appear here after
