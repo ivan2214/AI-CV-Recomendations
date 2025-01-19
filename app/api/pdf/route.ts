@@ -1,13 +1,13 @@
 import * as fs from "node:fs/promises";
 import path from "node:path";
-import pdf from "pdf-parse-fork";
+import { getApiKey } from "@/actions/saveApiKey";
+import { decryptApiKey } from "@/lib/encryption";
 /* Production */
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 /* Local */
 /* import { createOpenAICompatible } from "@ai-sdk/openai-compatible"; */
 import { generateText } from "ai";
-import { getApiKey } from "@/actions/saveApiKey";
-import { decryptApiKey } from "@/lib/encryption";
+import pdf from "pdf-parse-fork";
 
 export async function POST(req: Request) {
 	const formData = await req.formData();

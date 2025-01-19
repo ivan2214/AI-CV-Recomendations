@@ -1,16 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { saveApiKey } from "@/actions/saveApiKey";
+import { Button } from "@/components/ui/button";
 import {
 	Dialog,
 	DialogContent,
+	DialogDescription,
 	DialogHeader,
 	DialogTitle,
-	DialogDescription,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { saveApiKey } from "@/actions/saveApiKey";
+import { useState } from "react";
 
 interface ApiKeyModalProps {
 	isOpen: boolean;

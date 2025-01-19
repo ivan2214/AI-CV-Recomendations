@@ -13,7 +13,7 @@ export function Header() {
 								AI CV Recomendations
 							</span>
 						</Link>
-						<div className="ml-10 hidden space-x-8 lg:block">
+						{/* 	<div className="ml-10 hidden space-x-8 lg:block">
 							<Link
 								href="/"
 								className="font-medium text-base text-gray-300 hover:text-white"
@@ -26,7 +26,7 @@ export function Header() {
 							>
 								About
 							</Link>
-						</div>
+						</div> */}
 					</div>
 				</div>
 			</nav>
