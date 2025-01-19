@@ -7,22 +7,13 @@
 		"build": "next build",
 		"start": "next start",
 		"lint": "next lint",
-		"check": "biome check --write",
-		"prisma:migrate": "pnpm dlx prisma migrate dev",
-		"prisma:reset": "pnpm dlx prisma migrate reset --force",
-		"prisma:generate": "pnpm dlx prisma generate",
-		"prisma:studio": "pnpm dlx prisma studio",
-		"postinstall": "prisma migrate dev && prisma migrate reset --force"
+		"check": "biome check --write"
 	},
 	"dependencies": {
 		"@ai-sdk/google": "^1.1.0",
 		"@ai-sdk/openai-compatible": "^0.1.0",
-		"@clerk/nextjs": "^6.9.14",
 		"@geoffcox/react-splitter": "^2.1.2",
 		"@hookform/resolvers": "^3.10.0",
-		"@prisma/client": "6.2.1",
-		"@radix-ui/react-avatar": "^1.1.2",
-		"@radix-ui/react-dropdown-menu": "^2.1.4",
 		"@radix-ui/react-label": "^2.1.1",
 		"@radix-ui/react-progress": "^1.1.1",
 		"@radix-ui/react-slot": "^1.1.1",
@@ -33,10 +24,8 @@
 		"lucide-react": "^0.473.0",
 		"next": "15.1.5",
 		"next-themes": "^0.4.4",
-		"pdf-lib": "^1.17.1",
 		"pdf-parse": "^1.1.1",
 		"pdf-parse-fork": "^1.2.0",
-		"pdf-text-extract": "^1.5.0",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
 		"react-hook-form": "^7.54.2",
@@ -47,13 +36,11 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
-		"@types/formidable": "^3.4.5",
 		"@types/node": "^20",
 		"@types/pdf-parse": "^1.1.4",
 		"@types/react": "^19",
 		"@types/react-dom": "^19",
 		"postcss": "^8",
-		"prisma": "^6.2.1",
 		"tailwindcss": "^3.4.1",
 		"typescript": "^5"
 	}

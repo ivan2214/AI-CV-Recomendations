@@ -1,7 +1,5 @@
-import Link from "next/link";
 import { Brain } from "lucide-react";
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
-import { Button } from "./ui/button";
+import Link from "next/link";
 
 export function Header() {
 	return (
@@ -29,20 +27,6 @@ export function Header() {
 								About
 							</Link>
 						</div>
-					</div>
-
-					<div className="ml-10 space-x-4">
-						<SignedOut>
-							<SignInButton mode="modal">
-								<Button className="rounded-md border border-transparent bg-blue-500 px-4 py-2 font-medium text-lg text-white transition duration-150 ease-in-out hover:bg-blue-600">
-									Iniciar sesión
-								</Button>
-							</SignInButton>
-						</SignedOut>
-
-						<SignedIn>
-							<UserButton showName />
-						</SignedIn>
 					</div>
 				</div>
 			</nav>

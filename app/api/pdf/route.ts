@@ -1,7 +1,7 @@
-import path from "node:path";
 import * as fs from "node:fs/promises";
+import path from "node:path";
 import pdf from "pdf-parse-fork";
-import {} from "pdf-lib";
+
 /* import { createGoogleGenerativeAI } from "@ai-sdk/google"; */
 import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
 import { generateText } from "ai";
@@ -126,8 +126,6 @@ ${textExtracted}
 			prompt,
 		});
 
-		console.log("AI Text:", text);
-
 		const regex = /"([^"]+)"/g;
 		const recommendations = [];
 
@@ -137,8 +135,6 @@ ${textExtracted}
 			recommendations.push(match[1]);
 			match = regex.exec(text); // Obtener la siguiente coincidencia
 		}
-
-		console.log(recommendations);
 
 		return recommendations;
 	} catch (error) {

@@ -1,7 +1,5 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import CVUploadForm from "./CVUploadForm";
 import {
 	Card,
 	CardContent,
@@ -9,7 +7,9 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import { Upload, FileText, Zap, XCircle, CheckCircle } from "lucide-react";
+import { CheckCircle, FileText, Upload, XCircle, Zap } from "lucide-react";
+import { useState, useTransition } from "react";
+import CVUploadForm from "./CVUploadForm";
 import { Progress } from "./ui/progress";
 
 export default function CVComparisonPage() {
