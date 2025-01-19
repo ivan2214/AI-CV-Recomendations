@@ -20,7 +20,7 @@ import { Loader2 } from "lucide-react";
 
 type CVUploadFormProps = {
 	onUpload: (oldCV: string) => void;
-	handleNewCVUpload: (newCV: string) => void;
+	handleRecomendations: (recomendations: string[]) => void;
 };
 
 const formSchema = z.object({
@@ -32,33 +32,14 @@ const formSchema = z.object({
 
 export default function CVUploadForm({
 	onUpload,
-	handleNewCVUpload,
+	handleRecomendations,
 }: CVUploadFormProps) {
 	const [isPending, startTransition] = useTransition();
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			cvOriginal: undefined,
-			jobDescription: `
-Requisitos 
-
-Experiencia: 
-Mínimo de 3 años como desarrollador front-end. Tecnologías: Dominio de HTML5, CSS3, JavaScript, TypeScript, Node.js y Vainilla JS.
-Frameworks:
-Experiencia con jQuery, React, Bootstrap 3+.
-Familiarizado con herramientas como Babel y Webpack.
-Sólida experiencia en el uso de Gatsby.js
-Diseño responsivo: Conocimiento profundo de la creación de diseños responsivos, aplicaciones web progresivas (PWA) y aplicaciones de una sola página (SPA).
-Control de versiones: Competente en el uso de Git para el control de versiones de código fuente.
-Pruebas: Experiencia con marcos de pruebas unitarias y de integración como Mocha y Jest.
-Optimización web: Fundamentos sólidos en la optimización de páginas web, que incluyen:
-Análisis de tiempos de carga.
-Implementación de estrategias de almacenamiento en caché.
-Optimización de la entrega de imágenes y contenido a través de CDN.
-Técnicas como la carga diferida y la construcción de componentes web.
-Calidad del código: Competente en el uso de herramientas de revisión de código como SonarQube y Linting.
-Fundamentos de DevOps: Comprensión básica de los flujos de trabajo de integración.
-Marcos Ágiles: Conocimiento de metodologías ágiles de desarrollo y buenas prácticas.`,
+			jobDescription: "",
 		},
 	});
 
@@ -82,15 +63,16 @@ Marcos Ágiles: Conocimiento de metodologías ágiles de desarrollo y buenas pr�
 					method: "POST",
 					body: formData,
 				});
-				const result = await response.blob();
-				const pdfUrl = URL.createObjectURL(result);
+				const {
+					status,
+					recomendations,
+				}: {
+					status: "success" | "error";
+					recomendations: string[];
+				} = await response.json();
 
-				console.log("Result:", result);
-
-				if (pdfUrl) {
-					handleNewCVUpload(pdfUrl);
-				} else {
-					console.log("Error al generar el PDF");
+				if (status === "success") {
+					handleRecomendations(recomendations);
 				}
 			});
 		} catch (error) {
@@ -139,6 +121,12 @@ Marcos Ágiles: Conocimiento de metodologías ágiles de desarrollo y buenas pr�
 								<Textarea
 									{...field}
 									placeholder="Descripción de la oferta laboral"
+									onInput={(e) => {
+										const target = e.target as HTMLTextAreaElement;
+										target.style.height = "auto"; // Reset height to calculate the new height
+										target.style.height = `${target.scrollHeight}px`; // Set height based on content
+									}}
+									className="resize-none overflow-hidden"
 								/>
 							</FormControl>
 							<FormDescription>

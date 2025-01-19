@@ -3,17 +3,18 @@
 import { useState } from "react";
 import CVUploadForm from "./CVUploadForm";
 import CVComparisonViewer from "./CVComparisonViewer";
+import SuggestionsList from "./SuggestionsList";
 
 export default function CVComparisonPage() {
 	const [oldCV, setOldCV] = useState("");
-	const [newCV, setNewCV] = useState("");
+	const [recomendations, setRecomendations] = useState<string[]>([]);
 
 	const handleUpload = (oldCVUrl: string) => {
 		setOldCV(oldCVUrl);
 	};
 
-	const handleNewCVUpload = (newCVUrl: string) => {
-		setNewCV(newCVUrl);
+	const handleRecomendations = (recomendations: string[]) => {
+		setRecomendations(recomendations);
 	};
 
 	return (
@@ -21,12 +22,17 @@ export default function CVComparisonPage() {
 			<div className="flex flex-col gap-4">
 				<CVUploadForm
 					onUpload={handleUpload}
-					handleNewCVUpload={handleNewCVUpload}
+					handleRecomendations={handleRecomendations}
 				/>
 			</div>
 			<div className="grid gap-4">
-				<CVComparisonViewer oldCV={oldCV} newCV={newCV} />
+				<CVComparisonViewer oldCV={oldCV} />
 			</div>
+			{recomendations.length > 0 && (
+				<div className="grid gap-4">
+					<SuggestionsList suggestions={recomendations} />
+				</div>
+			)}
 		</div>
 	);
 }
