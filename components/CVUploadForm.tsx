@@ -15,12 +15,14 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useTransition } from "react";
+
 import { Loader2 } from "lucide-react";
 
 type CVUploadFormProps = {
-	onUpload: (oldCV: string) => void;
+	onUpload: (oldCV: File) => void;
 	handleRecomendations: (recomendations: string[]) => void;
+	startTransition: (callback: () => void) => void;
+	isPending: boolean;
 };
 
 const formSchema = z.object({
@@ -33,8 +35,9 @@ const formSchema = z.object({
 export default function CVUploadForm({
 	onUpload,
 	handleRecomendations,
+	startTransition,
+	isPending,
 }: CVUploadFormProps) {
-	const [isPending, startTransition] = useTransition();
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -46,8 +49,7 @@ export default function CVUploadForm({
 	const handleCVUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const file = event.target.files?.[0];
 		if (file) {
-			const fileURL = URL.createObjectURL(file);
-			onUpload(fileURL);
+			onUpload(file);
 		}
 	};
 
@@ -84,7 +86,7 @@ export default function CVUploadForm({
 		<Form {...form}>
 			<form
 				onSubmit={form.handleSubmit(onSubmit)}
-				className="space-y-4"
+				className="space-y-6"
 				encType="multipart/form-data"
 			>
 				<FormField
@@ -92,9 +94,12 @@ export default function CVUploadForm({
 					name="cvOriginal"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>CV</FormLabel>
+							<FormLabel className="mb-2 block font-medium text-gray-200 text-sm">
+								Upload your CV
+							</FormLabel>
 							<FormControl>
 								<Input
+									className="border-0 bg-white/20 text-white focus:ring-2 focus:ring-blue-400"
 									type="file"
 									accept=".txt,.pdf,.doc,.docx"
 									onChange={(e) => {
@@ -103,7 +108,7 @@ export default function CVUploadForm({
 									}}
 								/>
 							</FormControl>
-							<FormDescription>
+							<FormDescription className="text-gray-200">
 								Suba su CV en formato PDF, DOC, DOCX o TXT
 							</FormDescription>
 							<FormMessage />
@@ -116,20 +121,23 @@ export default function CVUploadForm({
 					name="jobDescription"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Job Description</FormLabel>
+							<FormLabel className="mb-2 block font-medium text-gray-200 text-sm">
+								Job Description
+							</FormLabel>
 							<FormControl>
 								<Textarea
 									{...field}
-									placeholder="Descripción de la oferta laboral"
+									placeholder="Paste the job description here..."
+									rows={5}
 									onInput={(e) => {
 										const target = e.target as HTMLTextAreaElement;
 										target.style.height = "auto"; // Reset height to calculate the new height
 										target.style.height = `${target.scrollHeight}px`; // Set height based on content
 									}}
-									className="resize-none overflow-hidden"
+									className="max-h-40 resize-none overflow-hidden border-0 bg-white/20 text-white placeholder:text-gray-400 focus:ring-2 focus:ring-blue-400"
 								/>
 							</FormControl>
-							<FormDescription>
+							<FormDescription className="text-gray-200">
 								Ingrese la descripción de la oferta laboral
 							</FormDescription>
 							<FormMessage />
@@ -137,9 +145,13 @@ export default function CVUploadForm({
 					)}
 				/>
 
-				<Button disabled={isPending} type="submit">
+				<Button
+					className="w-full bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-500 hover:to-blue-600"
+					disabled={isPending}
+					type="submit"
+				>
 					{isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-					{isPending ? "Analizando" : "Analizar"}
+					{isPending ? "Generating..." : "Generate Recommendations"}
 				</Button>
 			</form>
 		</Form>

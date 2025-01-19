@@ -81,7 +81,7 @@ async function aiGenerateRecomendations(
 		const model = lmstudio("llama-3.2-1b");
 
 		const prompt = `
- ## INSTRUCCIONES ##
+## INSTRUCCIONES ##
 - Analiza el contenido del CV proporcionado y compáralo con la descripción del puesto de trabajo.
 - Genera una lista clara, enumerada y específica de recomendaciones para mejorar el CV y hacerlo más relevante para el puesto de trabajo descrito.
 
@@ -93,20 +93,26 @@ async function aiGenerateRecomendations(
    - **Mejoras en la redacción** de responsabilidades y logros para que sean más impactantes, utilizando métricas claras (e.g., "Aumenté el tráfico web en un 30%").
    - **Identificación de habilidades faltantes** que el candidato podría incluir en función de su experiencia previa, pero que no están destacadas actualmente.
    - **Propuestas para reorganizar** o priorizar secciones del CV según las necesidades del puesto.
+   - Resaltar aspectos negativos, como habilidades relevantes que no están presentes o logros que podrían detallarse mejor.
 
 ## FORMATO DE RESPUESTA ##
-- La respuesta debe ser **concisa, detallada y enumerada**.
-- Ejemplos de formato de respuesta:
-  1. Incluir palabras clave como "diseño responsivo" y "optimización móvil" en la sección de experiencia, ya que el CV menciona React y TailwindCSS en el desarrollo de interfaces web.
-  2. Resaltar logros cuantificables, como "Reduje el tiempo de carga de páginas en un 25%", para alinearlo con el enfoque del puesto en rendimiento técnico.
-  3. Reorganizar la sección de habilidades técnicas para que "JavaScript", "React", y "TailwindCSS" estén destacadas al inicio, dado que son prioritarias en la descripción del puesto.
-  4. Corregir errores ortográficos y gramaticales detectados en la sección de educación.
-  5. Incluir una sección de proyectos destacando un ejemplo donde se aplicaron habilidades relevantes, como desarrollo full stack con React y Node.js.
+- La respuesta debe ser un array llamado \`recommendations\`, que contenga un máximo de 10 sugerencias claras y específicas como strings.
+- Ejemplo de estructura:
+\`\`\`javascript
+const recommendations = [
+  "Incluir palabras clave como 'diseño responsivo' y 'optimización móvil' en la sección de experiencia, ya que el CV menciona React y TailwindCSS en el desarrollo de interfaces web.",
+  "Resaltar logros cuantificables, como 'Reduje el tiempo de carga de páginas en un 25%', para alinearlo con el enfoque del puesto en rendimiento técnico.",
+  "Reorganizar la sección de habilidades técnicas para que 'JavaScript', 'React', y 'TailwindCSS' estén destacadas al inicio, dado que son prioritarias en la descripción del puesto.",
+  "Falta mencionar experiencia en herramientas de control de versiones como Git, que es requerida para el puesto.",
+  "Incluir una sección de proyectos destacando un ejemplo donde se aplicaron habilidades relevantes, como desarrollo full stack con React y Node.js.",
+];
+\`\`\`
 
 ## NOTA IMPORTANTE ##
-- Limita la respuesta únicamente a las recomendaciones enumeradas.
+- Limita la respuesta únicamente al array \`recommendations\`.
 - Asegúrate de que las sugerencias sean relevantes para el contenido del CV y el puesto.
 - No incluyas contenido literal del CV ni de la descripción del puesto en la respuesta.
+- No superar el límite de 10 recomendaciones.
 
 ## DESCRIPCION DEL PUESTO ##
 ${jobDescription}
@@ -122,22 +128,21 @@ ${textExtracted}
 
 		console.log("AI Text:", text);
 
-		const recomendationsArray = text
-			.split("\n")
-			.map((line) => line.trim())
-			.filter((line) => /^[0-9]+\.\s/.test(line)) // Asegura que sea una línea enumerada
-			.map(
-				(line) =>
-					line
-						.replace(/^[0-9]+\.\s/, "") // Quita el número y el punto inicial
-						.replace(/\*\*/g, ""), // Elimina los asteriscos dobles
-			);
+		const regex = /"([^"]+)"/g;
+		const recommendations = [];
 
-		console.log("Recomendations Array:", recomendationsArray);
+		let match = regex.exec(text); // Obtener la primera coincidencia
 
-		return recomendationsArray;
+		while (match !== null) {
+			recommendations.push(match[1]);
+			match = regex.exec(text); // Obtener la siguiente coincidencia
+		}
+
+		console.log(recommendations);
+
+		return recommendations;
 	} catch (error) {
-		console.error("Error generating CV:", error);
+		console.error("Error generando recomendaciones:", error);
 		return null;
 	}
 }

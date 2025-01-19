@@ -11,7 +11,9 @@ export default function LoginHero() {
 				</p>
 
 				<SignInButton mode="modal">
-					<Button>Iniciar sesión</Button>
+					<Button className="rounded-md border border-transparent bg-blue-500 px-4 py-2 font-medium text-lg text-white transition duration-150 ease-in-out hover:bg-blue-600">
+						Iniciar sesión
+					</Button>
 				</SignInButton>
 			</div>
 		</div>

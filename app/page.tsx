@@ -1,5 +1,4 @@
 import CVComparisonPage from "@/components/CVComparisonPage";
-import Header from "@/components/Header";
 import LoginHero from "@/components/LoginHero";
 import { auth, currentUser } from "@clerk/nextjs/server";
 
@@ -16,16 +15,5 @@ export default async function Home() {
 	// Use `user` to render user details or create UI elements
 	const isLoggedIn = !!user;
 
-	return (
-		<>
-			<Header />
-			{isLoggedIn ? (
-				<main className="mx-auto h-full w-full max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-					<CVComparisonPage />
-				</main>
-			) : (
-				<LoginHero />
-			)}
-		</>
-	);
+	return <>{isLoggedIn ? <CVComparisonPage /> : <LoginHero />}</>;
 }
