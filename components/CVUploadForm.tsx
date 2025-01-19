@@ -36,7 +36,40 @@ const formSchema = z.object({
 		.refine((file) => file.size > 0, {
 			message: "CV file is required and must not be empty",
 		}),
-	jobDescription: z.string().min(10).max(1500),
+	jobDescription: z
+		.string()
+		.min(10, {
+			message: "Job description must be at least 10 characters long",
+		})
+		.superRefine((value, ctx) => {
+			// Validación de longitud máxima
+			if (value.trim().length > 2500) {
+				ctx.addIssue({
+					path: [],
+					message: `Job description must not exceed 2500 characters. ${value.trim().length} / 2500`,
+					code: z.ZodIssueCode.custom,
+				});
+			}
+
+			// Validación de no estar vacío
+			if (value.trim().length === 0) {
+				ctx.addIssue({
+					path: [],
+					message: "Job description is required and must not be empty",
+					code: z.ZodIssueCode.custom,
+				});
+			}
+
+			// Validación de tener mas de 10 palabras
+			const words = value.split(" ");
+			if (words.length < 10) {
+				ctx.addIssue({
+					path: [],
+					message: "Job description must contain at least 10 words",
+					code: z.ZodIssueCode.custom,
+				});
+			}
+		}),
 });
 
 export default function CVUploadForm({
@@ -136,9 +169,9 @@ export default function CVUploadForm({
 								/>
 							</FormControl>
 							<FormDescription className="text-gray-200">
-								Suba su CV en formato PDF, DOC, DOCX o TXT
+								Upload your CV in PDF, DOC, DOCX or TXT format
 							</FormDescription>
-							<FormMessage />
+							<FormMessage className="text-red-400" />
 						</FormItem>
 					)}
 				/>
@@ -161,13 +194,17 @@ export default function CVUploadForm({
 										target.style.height = "auto"; // Reset height to calculate the new height
 										target.style.height = `${target.scrollHeight}px`; // Set height based on content
 									}}
-									className="max-h-40 resize-none overflow-hidden border-0 bg-white/20 text-white placeholder:text-gray-400 focus:ring-2 focus:ring-blue-400"
+									style={{
+										scrollbarWidth: "thin",
+										scrollbarColor: "#eee #2563ea",
+									}}
+									className="max-h-40 resize-none overflow-y-scroll border-0 bg-white/20 text-white placeholder:text-gray-400 focus:ring-2 focus:ring-blue-400"
 								/>
 							</FormControl>
 							<FormDescription className="text-gray-200">
-								Ingrese la descripción de la oferta laboral
+								Enter the description of the job offer
 							</FormDescription>
-							<FormMessage />
+							<FormMessage className="text-red-400" />
 						</FormItem>
 					)}
 				/>
