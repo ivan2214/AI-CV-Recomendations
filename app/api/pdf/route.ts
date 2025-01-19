@@ -1,15 +1,35 @@
 import * as fs from "node:fs/promises";
 import path from "node:path";
 import pdf from "pdf-parse-fork";
-
-/* import { createGoogleGenerativeAI } from "@ai-sdk/google"; */
-import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
+/* Production */
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
+/* Local */
+/* import { createOpenAICompatible } from "@ai-sdk/openai-compatible"; */
 import { generateText } from "ai";
+import { getApiKey } from "@/actions/saveApiKey";
+import { decryptApiKey } from "@/lib/encryption";
 
 export async function POST(req: Request) {
 	const formData = await req.formData();
 	const cvOriginal = formData.get("cvOriginal") as File;
 	const jobDescription = formData.get("jobDescription") as string;
+
+	// tomar la api key desde la cookies y decodificarla
+	const apiKeyCookie = await getApiKey();
+
+	if (!apiKeyCookie) {
+		return new Response(JSON.stringify({ error: "No API key provided" }), {
+			status: 400,
+		});
+	}
+
+	const apiKey = await decryptApiKey(apiKeyCookie);
+
+	if (!apiKey) {
+		return new Response(JSON.stringify({ error: "No API key provided" }), {
+			status: 400,
+		});
+	}
 
 	if (!cvOriginal) {
 		return new Response(JSON.stringify({ error: "No file uploaded" }), {
@@ -26,6 +46,7 @@ export async function POST(req: Request) {
 		const recomendations = await aiGenerateRecomendations(
 			textExtracted,
 			jobDescription,
+			apiKey,
 		);
 
 		if (recomendations) {
@@ -62,23 +83,31 @@ async function extractTextFromPDF(pdfPath: string) {
 async function aiGenerateRecomendations(
 	textExtracted: string,
 	jobDescription: string,
+	apiKey: string,
 ): Promise<string[] | null> {
-	/* 	const google = createGoogleGenerativeAI({
-		apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
-	}); */
+	/* Production */
+	const google = createGoogleGenerativeAI({
+		apiKey,
+	});
 
+	/* Local  */
+
+	/* 
+	
 	const lmstudio = createOpenAICompatible({
 		name: "lmstudio",
 		baseURL: "http://localhost:1234/v1",
 	});
-
+ */
 	try {
 		if (!textExtracted) throw new Error("No CV file provided");
 		if (!jobDescription) throw new Error("No job description provided");
 
-		/* const model = google("gemini-1.5-pro-latest"); */
+		/* Production */
+		const model = google("gemini-1.5-pro-latest");
 
-		const model = lmstudio("llama-3.2-1b");
+		/* Local */
+		/* const model = lmstudio("llama-3.2-1b"); */
 
 		const prompt = `
 ## INSTRUCCIONES ##

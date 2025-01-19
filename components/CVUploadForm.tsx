@@ -17,6 +17,9 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { getApiKey } from "@/actions/saveApiKey";
+import { ApiKeyModal } from "./ApiKeyModal";
 
 type CVUploadFormProps = {
 	onUpload: (oldCV: File) => void;
@@ -38,6 +41,20 @@ export default function CVUploadForm({
 	startTransition,
 	isPending,
 }: CVUploadFormProps) {
+	const [showApiKeyModal, setShowApiKeyModal] = useState(false);
+	const [hasApiKey, setHasApiKey] = useState(false);
+
+	useEffect(() => {
+		const checkApiKey = async () => {
+			const apiKey = await getApiKey();
+			setHasApiKey(!!apiKey); // Convert to boolean
+			if (!apiKey) {
+				setShowApiKeyModal(true); // Show the API key modal
+			}
+		};
+		checkApiKey();
+	}, []);
+
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -54,6 +71,12 @@ export default function CVUploadForm({
 	};
 
 	async function onSubmit(values: z.infer<typeof formSchema>) {
+		// Check if API key is available
+		if (!hasApiKey) {
+			setShowApiKeyModal(true);
+			return;
+		}
+
 		const { cvOriginal, jobDescription } = values;
 		try {
 			const formData = new FormData();
@@ -154,6 +177,10 @@ export default function CVUploadForm({
 					{isPending ? "Generating..." : "Generate Recommendations"}
 				</Button>
 			</form>
+			<ApiKeyModal
+				isOpen={showApiKeyModal}
+				onClose={() => setShowApiKeyModal(false)}
+			/>
 		</Form>
 	);
 }
