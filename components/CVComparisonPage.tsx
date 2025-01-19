@@ -90,7 +90,7 @@ export default function CVComparisonPage() {
 									<ul className="space-y-4">
 										{recommendations.map((rec) => (
 											<li key={rec} className="flex items-start">
-												{rec.includes("no") ? (
+												{rec.startsWith("No") || rec.startsWith("no") ? (
 													<XCircle className="mt-1 mr-2 h-5 w-5 flex-shrink-0 text-red-500" />
 												) : (
 													<CheckCircle className="mt-1 mr-2 h-5 w-5 flex-shrink-0 text-green-500" />

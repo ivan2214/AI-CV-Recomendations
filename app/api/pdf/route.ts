@@ -113,6 +113,8 @@ async function aiGenerateRecomendations(
 ## INSTRUCCIONES ##
 - Analiza el contenido del CV proporcionado y compáralo con la descripción del puesto de trabajo.
 - Genera una lista clara, enumerada y específica de recomendaciones para mejorar el CV y hacerlo más relevante para el puesto de trabajo descrito.
+- Si encuentras algo que no este en la descripción del puesto, no lo incluyas en la respuesta.
+- Si encuentras que al perfil le faltan algunas habilidades o experiencia o cualquier otro aspecto relevante, empezar con la palabra No.
 
 ## REQUISITOS ##
 1. **No incluir** el texto completo del CV ni de la descripción del puesto en la respuesta.
