@@ -1,4 +1,3 @@
-import { Brain } from "lucide-react";
 import Link from "next/link";
 
 export function Header() {
@@ -8,7 +7,14 @@ export function Header() {
 				<div className="flex w-full items-center justify-between py-6">
 					<div className="flex items-center">
 						<Link href="/" className="flex items-center">
-							<Brain className="h-10 w-10 text-white" />
+							<img
+								src="/favicon.webp"
+								width="32"
+								height="32"
+								loading="eager"
+								alt="Logo"
+								className="h-10 w-10 text-white"
+							/>
 							<span className="ml-3 font-bold text-2xl text-white">
 								AI CV Recomendations
 							</span>
