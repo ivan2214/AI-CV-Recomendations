@@ -4,7 +4,8 @@ import { randomBytes, createCipheriv, createDecipheriv } from "node:crypto";
 const algorithm = "aes-256-ctr";
 
 // Obtener la clave secreta de 32 bytes desde las variables de entorno (decodificada desde base64)
-const secretKey = Buffer.from(
+const secretKey = Buffer.alloc(
+	32,
 	process.env.ENCRYPTION_KEY || "defaultSecretKey32CharactersLong!",
 	"base64",
 );
