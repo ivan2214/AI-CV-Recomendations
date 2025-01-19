@@ -30,8 +30,11 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# Ignorar todos los archivos .env
 .env*
+
+# Excluir .env.example del .gitignore
+!.env.example
 
 # vercel
 .vercel
