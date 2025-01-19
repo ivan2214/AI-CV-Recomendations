@@ -1,36 +1,68 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI CV Recommendations
 
-## Getting Started
+Este proyecto utiliza la inteligencia artificial para ofrecer recomendaciones personalizadas de mejora en tu CV en función de una descripción de empleo. Solo necesitas proporcionar tu CV y la descripción del trabajo, y recibirás 10 recomendaciones que te ayudarán a optimizar tu perfil profesional para esa oferta.
 
-First, run the development server:
+## Características
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Recomendaciones personalizadas**: Se generan 10 recomendaciones específicas para mejorar tu CV en base a la descripción de un trabajo.
+- **Integración con Google Gemini AI**: La herramienta utiliza la API de Google Gemini AI para generar recomendaciones.
+- **Totalmente gratuito**: No es necesario pagar por las recomendaciones, solo necesitas tu clave de API de Google Gemini AI.
+- **Tecnologías utilizadas**:
+  - **Next.js** para la creación de la aplicación web.
+  - **Shadcn UI** para el diseño de la interfaz de usuario.
+  - **SDK de AI de Vercel** para facilitar la integración con IA.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Requisitos
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Tener una clave de API de Google Gemini AI (puedes obtenerla [aquí](https://gemini.google.com)).
+- Node.js y npm instalados en tu máquina.
+- Vercel SDK para la integración con IA.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Instalación
 
-## Learn More
+1. Clona el repositorio:
 
-To learn more about Next.js, take a look at the following resources:
+   ```bash
+   git clone https://github.com/tu-usuario/ai-cv-recommendations.git
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+2. Navega al directorio del proyecto:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+   ```bash
+   cd ai-cv-recommendations
+   ```
 
-## Deploy on Vercel
+3. Instala las dependencias:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+   ```bash
+   npm install
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+4. Crea un archivo `.env.local` en el directorio raíz y agrega tu clave de API de Google Gemini AI:
+
+   ```bash
+   GOOGLE_API_KEY=tu_clave_de_api_aqui
+   ```
+
+5. Ejecuta el proyecto:
+
+   ```bash
+   npm run dev
+   ```
+
+   Esto iniciará el servidor en `http://localhost:3000`.
+
+## Uso
+
+1. Subir tu CV en formato PDF.
+2. Introducir la descripción del empleo.
+3. Haz clic en el botón "Obtener recomendaciones".
+4. Recibirás 10 recomendaciones para optimizar tu CV según la oferta laboral.
+
+## Contribuir
+
+Si quieres contribuir al proyecto, haz un fork del repositorio y crea un Pull Request con tus mejoras.
+
+## Licencia
+
+Este proyecto está bajo la licencia MIT. Consulta el archivo [LICENSE](LICENSE) para más detalles.
