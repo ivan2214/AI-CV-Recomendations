@@ -35,7 +35,17 @@ export function ApiKeyModal({ isOpen, onClose }: ApiKeyModalProps) {
 					<DialogTitle>Enter your API Key</DialogTitle>
 					<DialogDescription>
 						We need your API key to process CV and job descriptions. It will be
-						encrypted and stored securely.
+						encrypted and stored securely.{" "}
+						<strong className="font-bold text-white">Get your API key</strong>
+						<a
+							href="https://aistudio.google.com/app/apikey"
+							target="_blank"
+							rel="noopener noreferrer"
+							className="ml-1 text-blue-500 hover:underline"
+						>
+							here
+						</a>
+						.
 					</DialogDescription>
 				</DialogHeader>
 				<form onSubmit={handleSubmit} className="space-y-4">
